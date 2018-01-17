@@ -1,2 +1,5 @@
 tools/*
 !tools/packages.config
+artifacts
+**/bin
+**/obj
