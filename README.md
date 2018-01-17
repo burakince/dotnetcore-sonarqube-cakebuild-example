@@ -6,3 +6,7 @@
 
 ## SonarQube Status
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=CustomerService)](https://sonarcloud.io/dashboard/index/CustomerService)
+
+```
+./build.ps1 -Target Generate-Report
+```

@@ -5,6 +5,7 @@
 
 var target = Argument("target", "Default");
 var sonarToken = EnvironmentVariable("SONAR_TOKEN") ?? "abcdef0123456789";
+var buildVersion = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "1.0";
 var configuration = Context.Argument("configuration", "Release");
 
 var rootDir = (DirectoryPath)Context.Directory(".");
@@ -52,7 +53,8 @@ Task("SonarBegin")
             Name = "Customer Service",
             Login = sonarToken,
             OpenCoverReportsPath = testCoverageOutput.ToString(),
-            Organization = "burakince-github"
+            Organization = "burakince-github",
+            Version = buildVersion
         });
     });
 
@@ -76,7 +78,7 @@ Task("Run-Tests")
             OldStyle = true,
             MergeOutput = true
         }
-        .WithFilter("+[*]* -[./test/*]* -[Moq]*");
+        .WithFilter("+[*]* -[*.Test*]* -[Moq]*");
 
         var testProjects = GetFiles("./test/**/*.csproj");
         foreach (var project in testProjects)

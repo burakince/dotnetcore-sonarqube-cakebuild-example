@@ -5,3 +5,4 @@ tools/*
 **/bin
 **/obj
 .sonarqube
+.vscode
