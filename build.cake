@@ -8,7 +8,7 @@ var sonarToken = EnvironmentVariable("SONAR_TOKEN") ?? "abcdef0123456789";
 var configuration = Context.Argument("configuration", "Release");
 
 var rootDir = (DirectoryPath)Context.Directory(".");
-var artifacts = rootDir.Combine("artifacts");
+var artifacts = rootDir.Combine(".artifacts");
 var testResults = artifacts.Combine("Test-Results");
 
 var objDirectories = GetDirectories("./**/**/obj/*");
@@ -51,7 +51,8 @@ Task("SonarBegin")
             Key = "CustomerService",
             Name = "Customer Service",
             Login = sonarToken,
-            OpenCoverReportsPath = testCoverageOutput.ToString()
+            OpenCoverReportsPath = testCoverageOutput.ToString(),
+            Organization = "burakince-github"
         });
     });
 
