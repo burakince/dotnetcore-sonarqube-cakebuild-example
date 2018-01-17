@@ -1,11 +1,14 @@
 #tool "nuget:https://www.nuget.org/api/v2?package=OpenCover&version=4.6.519"
 #tool "nuget:https://www.nuget.org/api/v2?package=ReportGenerator&version=2.4.5"
 #tool "nuget:https://www.nuget.org/api/v2?package=MSBuild.SonarQube.Runner.Tool&version=4.0.2"
+#tool "nuget:https://www.nuget.org/api/v2?package=coveralls.net&version=0.7.0"
 #addin "nuget:https://www.nuget.org/api/v2?package=Cake.Sonar&version=1.0.2"
+#addin "nuget:https://www.nuget.org/api/v2?package=Cake.Coveralls&version=0.7.0"
 
 var target = Argument("target", "Default");
 var sonarToken = EnvironmentVariable("SONAR_TOKEN") ?? "abcdef0123456789";
 var buildVersion = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "1.0";
+var coverallsToken = EnvironmentVariable("COVERALLS_REPO_TOKEN") ?? "abcdef0123456789";
 var configuration = Context.Argument("configuration", "Release");
 
 var rootDir = (DirectoryPath)Context.Directory(".");
@@ -120,6 +123,14 @@ Task("SonarEnd")
         });
     });
 
+Task("Upload-Coverage-Report")
+    .Does(() => {
+        CoverallsNet(testCoverageOutput, CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
+        {
+            RepoToken = coverallsToken
+        });
+    });
+
 Task("Build-and-Test")
     .IsDependentOn("Clean")
     .IsDependentOn("Restore-NuGet-Packages")
@@ -130,6 +141,10 @@ Task("Sonar-Analysis")
     .IsDependentOn("SonarBegin")
     .IsDependentOn("Build-and-Test")
     .IsDependentOn("SonarEnd");
+
+Task("Appveyor")
+    .IsDependentOn("Sonar-Analysis")
+    .IsDependentOn("Upload-Coverage-Report");
 
 Task("Generate-Report")
     .IsDependentOn("Build-and-Test")

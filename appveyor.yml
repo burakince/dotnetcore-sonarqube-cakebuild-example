@@ -6,7 +6,9 @@ image: Visual Studio 2017
 environment:
   SONAR_TOKEN:
     secure: 6jplMPMj1c8zr9Cq7z9nx2SdFM0W82C/0MNJdUjds7dIW9qq5B3wxfGzCvWr6lJ0
+  COVERALLS_REPO_TOKEN:
+    secure: 4JnYeOHfjipS7/8BTKiLHuyNYNDWg4oIczaGverNnNeViA5Vca4IxsKnKR7cZOxE
 build_script:
-- ps: ./build.ps1 -Target Sonar-Analysis
+- ps: ./build.ps1 -Target Appveyor
 test: off
 deploy: off
