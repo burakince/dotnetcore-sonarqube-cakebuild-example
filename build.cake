@@ -35,7 +35,7 @@ Task("Clean")
     {
         CleanDirectories(objDirectories);
         CleanDirectories(binDirectories);
-        CleanDirectories(testResults);
+        CleanDirectories(testResults.ToString());
     });
 
 Task("Restore-NuGet-Packages")
