@@ -7,6 +7,6 @@ environment:
   SONAR_TOKEN:
     secure: 6jplMPMj1c8zr9Cq7z9nx2SdFM0W82C/0MNJdUjds7dIW9qq5B3wxfGzCvWr6lJ0
 build_script:
-- ps: .\build.ps1
+- ps: ./build.ps1 -Target Sonar-Analysis
 test: off
 deploy: off
