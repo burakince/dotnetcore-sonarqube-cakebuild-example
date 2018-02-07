@@ -1,9 +1,11 @@
-#tool "nuget:https://www.nuget.org/api/v2?package=OpenCover&version=4.6.519"
-#tool "nuget:https://www.nuget.org/api/v2?package=ReportGenerator&version=2.4.5"
-#tool "nuget:https://www.nuget.org/api/v2?package=MSBuild.SonarQube.Runner.Tool&version=4.0.2"
-#tool "nuget:https://www.nuget.org/api/v2?package=coveralls.net&version=0.7.0"
-#addin "nuget:https://www.nuget.org/api/v2?package=Cake.Sonar&version=1.0.2"
-#addin "nuget:https://www.nuget.org/api/v2?package=Cake.Coveralls&version=0.7.0"
+#tool "nuget:?package=OpenCover&version=4.6.519"
+#tool "nuget:?package=ReportGenerator&version=2.4.5"
+#tool "nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.0.2"
+#tool "nuget:?package=coveralls.net&version=0.7.0"
+#addin "nuget:?package=Cake.Sonar&version=1.0.2"
+#addin "nuget:?package=Cake.Coveralls&version=0.7.0"
+#tool "nuget:?package=DependencyCheck.Runner.Tool&include=./**/dependency-check.sh&include=./**/dependency-check.bat"
+#addin "nuget:?package=Cake.DependencyCheck"
 
 var target = Argument("target", "Default");
 var sonarToken = EnvironmentVariable("SONAR_TOKEN") ?? "abcdef0123456789";
@@ -14,10 +16,13 @@ var configuration = Context.Argument("configuration", "Release");
 var rootDir = (DirectoryPath)Context.Directory(".");
 var artifacts = rootDir.Combine(".artifacts");
 var testResults = artifacts.Combine("Test-Results");
+var checkResults = artifacts.Combine("Check-Results");
 
 var objDirectories = GetDirectories("./**/**/obj/*");
 var binDirectories = GetDirectories("./**/**/bin/*");
 
+var projectName = "CustomerService";
+var scanPath = "src/Customer/*";
 var solution = rootDir.CombineWithFilePath("CustomerService.sln");
 var testCoverageOutput = testResults.CombineWithFilePath("OpenCover.xml");
 
@@ -32,6 +37,11 @@ Setup(context =>
     {
         CreateDirectory(testResults);
     }
+
+    if (!DirectoryExists(checkResults))
+    {
+        CreateDirectory(checkResults);
+    }
 });
 
 Task("Clean")
@@ -40,6 +50,7 @@ Task("Clean")
         CleanDirectories(objDirectories);
         CleanDirectories(binDirectories);
         CleanDirectories(testResults.ToString());
+        CleanDirectories(checkResults.ToString());
     });
 
 Task("Restore-NuGet-Packages")
@@ -131,7 +142,19 @@ Task("Upload-Coverage-Report")
         });
     });
 
-Task("Build-and-Test")
+Task("Dependency-Check")
+    .Does(() =>
+    {
+        DependencyCheck(new DependencyCheckSettings
+        {
+            Project = projectName,
+            Scan = scanPath,
+            Out = checkResults.ToString(),
+            Format = "XML"
+        });
+    });
+
+Task("Default")
     .IsDependentOn("Clean")
     .IsDependentOn("Restore-NuGet-Packages")
     .IsDependentOn("Build")
@@ -139,7 +162,7 @@ Task("Build-and-Test")
 
 Task("Sonar-Analysis")
     .IsDependentOn("SonarBegin")
-    .IsDependentOn("Build-and-Test")
+    .IsDependentOn("Default")
     .IsDependentOn("SonarEnd");
 
 Task("Appveyor")
@@ -147,10 +170,13 @@ Task("Appveyor")
     .IsDependentOn("Upload-Coverage-Report");
 
 Task("Generate-Report")
-    .IsDependentOn("Build-and-Test")
+    .IsDependentOn("Default")
     .IsDependentOn("Report");
 
-Task("Default")
-    .IsDependentOn("Build-and-Test");
+Task("Security")
+    .IsDependentOn("Clean")
+    .IsDependentOn("Restore-NuGet-Packages")
+    .IsDependentOn("Build")
+    .IsDependentOn("Dependency-Check");
 
 RunTarget(target);

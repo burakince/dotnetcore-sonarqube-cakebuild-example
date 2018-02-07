@@ -1,4 +1,6 @@
 .DS_Store
+*.userprefs
+*.html
 tools/*
 !tools/packages.config
 .artifacts
