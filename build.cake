@@ -2,7 +2,7 @@
 #tool "nuget:?package=ReportGenerator&version=2.4.5"
 #tool "nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.1.0"
 #tool "nuget:?package=coveralls.net&version=0.7.0"
-#addin "nuget:?package=Cake.Sonar&version=1.0.2"
+#addin "nuget:?package=Cake.Sonar&version=1.0.5"
 #addin "nuget:?package=Cake.Coveralls&version=0.7.0"
 #tool "nuget:?package=DependencyCheck.Runner.Tool&include=./**/dependency-check.sh&include=./**/dependency-check.bat"
 #addin "nuget:?package=Cake.DependencyCheck"
