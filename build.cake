@@ -1,6 +1,6 @@
 #tool "nuget:?package=OpenCover&version=4.6.519"
 #tool "nuget:?package=ReportGenerator&version=2.4.5"
-#tool "nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.0.2"
+#tool "nuget:?package=MSBuild.SonarQube.Runner.Tool&version=4.1.0"
 #tool "nuget:?package=coveralls.net&version=0.7.0"
 #addin "nuget:?package=Cake.Sonar&version=1.0.2"
 #addin "nuget:?package=Cake.Coveralls&version=0.7.0"
